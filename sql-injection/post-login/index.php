@@ -5,33 +5,31 @@ $strings = tr();
 $mysqli = new mysqli('localhost', 'sql_injection', '', 'sql_injection');
 
 if ($mysqli->connect_errno) {
-printf("Connect failed: %s\n", $mysqli->connect_error);
-exit();
+    printf("Connect failed: %s\n", $mysqli->connect_error);
+    exit();
 }
 
 session_start();
 
 if(isset($_POST['username']) && isset($_POST['password']) ){
-	
-	$usr=$_POST['username'];
-	$pwd=$_POST['password'];
+    $usr = $_POST['username'];
+    $pwd = $_POST['password'];
 
-	$sql = "SELECT username,password FROM users WHERE username='" . $usr . "' AND password='" . $pwd . "'";
+    // Use prepared statements to prevent SQL injection
+    $sql = "SELECT username FROM users WHERE username=? AND password=?";
+    if ($stmt = $mysqli->prepare($sql)) {
+        $stmt->bind_param("ss", $usr, $pwd);
+        $stmt->execute();
+        $stmt->store_result();
 
-
-if ($result = $mysqli->query($sql)) {
-while($obj = $result->fetch_object()){
-	$_SESSION['username'] = $usr;
-	header("Location: admin.php");
-	exit;
-}
-}
-
-elseif($mysqli->error){
-print($mysqli->error);
-}		
-	}	
-
+        if ($stmt->num_rows > 0) {
+            $_SESSION['username'] = $usr;
+            header("Location: admin.php");
+            exit;
+        }
+        $stmt->close();
+    }
+} 
 ?>
 
 <!DOCTYPE html>
