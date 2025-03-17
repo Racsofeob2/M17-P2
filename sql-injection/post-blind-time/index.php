@@ -1,27 +1,29 @@
 <?php
 
-    require("../../../lang/lang.php");
-    $strings = tr();
+require("../../../lang/lang.php");
+$strings = tr();
+
+$db = new PDO('mysql:host=localhost; dbname=sql_injection', 'sql_injection', '');
+
+if (isset($_POST['search'])) {
+    $search = $_POST['search'];
 
     try {
-        $db = new PDO('mysql:host=localhost; dbname=sql_injection', 'sql_injection', '');
-    } catch (Exception $e) {
-        echo $e;
+        $query = $db->prepare("SELECT * FROM stocks WHERE name = :search");
+        $query->bindParam(':search', $search, PDO::PARAM_STR);
+        $query->execute();
+        $list = $query->fetch(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        // Handle exception (logging, displaying an error message, etc.)
     }
 
-    if ( isset($_POST['email']) ){
-
-        $email = $_POST['email'];
-        $user = $db -> query("SELECT * FROM users WHERE email = '{$email}'");  
-
-        $status="success";
-    }
+    $result = !empty($list['name']) ? "true" : "false";
+}
 
 ?>
-
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -29,48 +31,53 @@
     <title><?php echo $strings['title'] ?></title>
     <link rel="stylesheet" href="bootstrap.min.css">
 </head>
+
 <body>
-    
-    <div class="container">
-        <div class="container-wrapper">
-            <div class="row pt-5 mt-5 mb-3" >
-                <div class="col-md-3"></div>
-                <div class="col-md-6">
-                    <h1><?php echo $strings['h1'] ?></h1>
-                </div>
-                <div class="col-md-3"></div>    
-            </div>
-            <div class="row pt-4 " >
-                <div class="col-md-3"></div>
-                <div class="col-md-6">
 
-                    <div class="alert alert-primary" role="alert">                         
-                        <?php echo $strings['box'] ?>
-                    </div>
-                    
-                    <div class="mb-3">
-                        
-                    <form action="" method="POST" autocomplate="off">
-                    <label for="email" class="form-label"><?php echo $strings['label'] ?></label>
-                        <input type="text" name="email" class="form-control" id="email" placeholder="name@example.com">
-                    </div>
-                      <button type="submit" class="btn btn-primary"><?php echo $strings['button'] ?></button>
-                    </form>
-   
-                    <?php
-                      if(isset($status)){
-                          if($status == "success"){
-                              echo '<div class="mt-3 alert alert-success" role="alert">'.$strings['success'].'</div>';
-                          }
-                      }
-                    ?>
-        
-                </div>
-                <div class="col-md-3"></div>      
-
-            </div>
+    <div class="container d-flex justify-content-center flex-column">
+        <div class="header-wrapper d-flex justify-content-center" style="margin-top: 20vh;">
+            <h1><?php echo $strings['header'] ?></h1>
         </div>
+        <div class="body-wapper d-flex justify-content-center mt-5">
+            <form action="#" method="POST">
+                <div class=" mt-3 fs-5" style="margin-left: 2px;"><?php echo $strings['text'] ?> </div>
+                <select class="form-select form-select-lg  mt-2" name="search" style="width: 500px;" id="opt">
+                    <option selected><?php echo $strings['selected'] ?></option>
+                    <option value="iphone11"><?php echo $strings['select1'] ?></option>
+                    <option value="airpodspro"><?php echo $strings['select2'] ?></option>
+                    <option value="applewatch7"><?php echo $strings['select3'] ?></option>
+                    <option value="iphone6s"><?php echo $strings['select4'] ?></option>
+                    <option value="iphone13"><?php echo $strings['select5'] ?></option>
+                    <option value="apple20w"><?php echo $strings['select6'] ?></option>
+                    <option value="ipad9"><?php echo $strings['select7'] ?></option>
+                    <option value="iphonese"><?php echo $strings['select8'] ?></option>
+                </select>
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn btn-warning mt-5 "><?php echo $strings['check'] ?></button>
+                </div>
+            </form>
+        </div>
+        <?php
+
+        if (!empty($result)) {
+            if ($result == "true") {
+                echo '<div class="alert-div d-flex justify-content-center mt-5">
+                        <div class="alert alert-success text-center" style="width: 500px;" role="alert">';
+                echo $strings['success'];
+                echo '</div>
+                    </div>';
+            } else {
+                echo '<div class="alert-div d-flex justify-content-center mt-5">
+                        <div class="alert alert-danger text-center" style="width: 500px;" role="alert">';
+                    
+                echo $strings['failed'];
+                echo '</div>
+                    </div>';
+            }
+        }
+        ?>
     </div>
     <script id="VLBar" title="<?= $strings['title'] ?>" category-id="2" src="/public/assets/js/vlnav.min.js"></script>
 </body>
+
 </html>
