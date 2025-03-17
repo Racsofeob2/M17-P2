@@ -8,22 +8,17 @@ $db = new PDO('mysql:host=localhost; dbname=sql_injection', 'sql_injection', '')
 if (isset($_POST['search'])) {
     $search = $_POST['search'];
 
-
     try {
-        $query = $db->prepare("SELECT * FROM stocks WHERE name = '" . $search . "'");
+        $query = $db->prepare("SELECT * FROM stocks WHERE name = :search");
+        $query->bindParam(':search', $search, PDO::PARAM_STR);
+        $query->execute();
+        $list = $query->fetch(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
+        // Handle exception (logging, displaying an error message, etc.)
     }
-    $query->execute();
-    $list = $query->fetch(PDO::FETCH_ASSOC);
 
-
-    if (!empty($list['name'])) {
-        $result = "true";
-    } else {
-        $result = "false";
-    }
+    $result = !empty($list['name']) ? "true" : "false";
 }
-
 
 ?>
 <!DOCTYPE html>
