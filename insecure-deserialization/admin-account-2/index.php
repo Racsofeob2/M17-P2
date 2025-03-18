@@ -5,15 +5,22 @@ require("../../../lang/lang.php");
 $strings = tr();
 error_reporting(0);
 ini_set('display_errors', 0);
-if( isset($_COOKIE['d2VsY29tZS1hZG1pbmlzdHJhdG9y']) ){
-    $user;
-    try{
-    $user = unserialize( urldecode( base64_decode ( $_COOKIE['d2VsY29tZS1hZG1pbmlzdHJhdG9y'] ) ));
-   
-    }catch(Exception $e){
+if (isset($_COOKIE['d2VsY29tZS1hZG1pbmlzdHJhdG9y'])) {
+    // Decode the cookie
+    $cookieData = base64_decode($_COOKIE['d2VsY29tZS1hZG1pbmlzdHJhdG9y']);
+    list($userData, $receivedHmac) = explode('::', $cookieData);
+
+    // Verify HMAC to ensure data integrity
+    $calculatedHmac = hash_hmac('sha256', $userData, 'S3cr3t!');
+
+    if (hash_equals($calculatedHmac, $receivedHmac)) {
+        $user = json_decode($userData);
+        // Proceed with your logic
+    } else {
         header("Location: login.php?msg=3");
         exit;
     }
+}
 
     $text = "";
     $administrator = md5('administrator');
