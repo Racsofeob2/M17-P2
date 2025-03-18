@@ -18,10 +18,11 @@
 		 
 			 
 			header("Location: index.php");
-			$user = new User($username,$password);
-			$serializedStr = serialize($user);
-			$extremeSecretCookie = base64_encode($serializedStr);
-			setcookie('V2VsY29tZS1hZG1pbgo',$extremeSecretCookie);
+			define("SECRET_KEY", "S3cr3t!"); 
+			$userData = json_encode(["username" => $username, "password" => $password]);
+			$hmac = hash_hmac('sha256', $userData, SECRET_KEY);
+			$safeCookie = base64_encode($userData . '::' . $hmac);
+			setcookie('V2VsY29tZS1hZG1pbgo', $safeCookie, time() + 3600, "/", "", true, true); 
 			
 			header("Location: index.php");
 			exit;
