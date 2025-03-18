@@ -8,7 +8,18 @@ ini_set('display_errors', 0);
 
 if( isset($_COOKIE['V2VsY29tZS1hZG1pbgo']) ){
     try{
-    $user = unserialize( base64_decode( $_COOKIE['V2VsY29tZS1hZG1pbgo'] ));
+        define("SECRET_KEY", "S3cr3t!"); 
+        $cookieData = base64_decode($_COOKIE['V2VsY29tZS1hZG1pbgo']);
+        list($userData, $hmac) = explode('::', $cookieData, 2);
+
+        if (hash_hmac('sha256', $userData, SECRET_KEY) !== $hmac) {
+            throw new Exception("Invalid cookie signature");
+        }
+
+        $user = json_decode($userData, true);
+        if (!$user || !isset($user['username'])) {
+            throw new Exception("Invalid cookie data");
+        }
     }catch(Exception $e){
         header("Location: login.php?msg=3");
         exit;
