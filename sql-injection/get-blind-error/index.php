@@ -31,7 +31,12 @@ if (isset($_POST['prev'])) {
 if (isset($_GET['img'])) {
     $img = $_GET['img'];
 
-    $user = $db->query("SELECT * FROM images WHERE id = $img");
+    // Use a prepared statement to avoid SQL injection
+    $stmt = $db->prepare("SELECT * FROM images WHERE id = :img");
+    $stmt->bindParam(':img', $img, PDO::PARAM_INT);
+    $stmt->execute();
+
+    $user = $stmt->fetch();
 }
 
 ?>
