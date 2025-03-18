@@ -46,9 +46,15 @@
                     <p><?php 
                         if(isset($_GET['country'])){
                             $page = $_GET['country'];
-                            $page = str_replace( array( "http://", "https://" ), "", $page ); 
-                            $page = str_replace( array( "../", "..\"" ), "", $page );
-                            include($page);
+                            
+                            // Sanitize the input by removing any path information
+                            $page = basename($page);  // This ensures only the file name is included
+                            
+                            // Optionally, check if the file exists before including
+                            $allowed_pages = ['france.php', 'germany.php', 'north_korea.php', 'turkey.php', 'england.php'];
+                            if (in_array($page, $allowed_pages)) {
+                                include($page);
+                            }
                         }
                     ?>
                     </p>
