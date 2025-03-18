@@ -2,6 +2,14 @@
     error_reporting(0);
     require("../../../lang/lang.php");
     $strings = tr();
+
+    // Get the user input and sanitize it
+    if (isset($_GET['country'])) {
+        $country = basename($_GET['country']);  // Remove any directory traversal
+        $page = $country . '.php';  // Append .php to match the format
+    } else {
+        $page = null;
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -27,11 +35,11 @@
                         <div class="mb-3">
                             <label for="country" class="form-label"><?php echo $strings['label']; ?></label>
                             <select name="country" id="country" class="form-select">
-                                <option value="france.php"><?php echo $strings['paris']; ?></option>
-                                <option value="germany.php"><?php echo $strings['berlin']; ?></option>
-                                <option value="north_korea.php"><?php echo $strings['pyongyang']; ?></option>
-                                <option value="turkey.php"><?php echo $strings['ankara']; ?></option>
-                                <option value="england.php"><?php echo $strings['london']; ?></option>
+                                <option value="france"><?php echo $strings['paris']; ?></option>
+                                <option value="germany"><?php echo $strings['berlin']; ?></option>
+                                <option value="north_korea"><?php echo $strings['pyongyang']; ?></option>
+                                <option value="turkey"><?php echo $strings['ankara']; ?></option>
+                                <option value="england"><?php echo $strings['london']; ?></option>
                             </select>
                         </div>
                         <div class="d-grid gap-2">
@@ -44,8 +52,9 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                     <p><?php 
-                        if(isset($_GET['country'])){
-                            $page = $_GET['country'];
+                        // Include the sanitized page if it exists
+                        $allowed_pages = ['france.php', 'germany.php', 'north_korea.php', 'turkey.php', 'england.php'];
+                        if (in_array($page, $allowed_pages)) {
                             include($page);
                         }
                     ?>
