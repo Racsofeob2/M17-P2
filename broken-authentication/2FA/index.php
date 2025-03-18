@@ -2,13 +2,18 @@
 require("../../../lang/lang.php");
 $strings = tr();
 session_start();
-session_unset();
+session_unset(); // Reset session data
+
+// Define a username and hashed password (for example, we use 'admin' as the username)
+$storedUsername = 'admin';
+$storedPasswordHash = '$2y$10$QGeqwpY6Z1KhDeM9Bd8I8.ezKzk6noCewgS2A/h3Pn1zxVve9gFCi'; // This is the hash of 'admin' using password_hash()
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    // Kullanıcı adı ve şifre doğrulaması yapılır (örneğin sadece admin ve admin olarak kabul ediliyor)
-    if ($username === 'admin' && $password === 'admin') {
+    // Check if the username matches
+    if ($username === $storedUsername && password_verify($password, $storedPasswordHash)) {
         $randomCode = rand(10000, 99999);
 
         // 2FA doğrulama kodu kullanıcıya gönderilir (örneğin burada oturumda saklanıyor)
