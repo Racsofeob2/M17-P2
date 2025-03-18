@@ -15,12 +15,12 @@ $db = new PDO('sqlite:database.db');
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" type="text/css" href="bootstrap.min.css">
-    <title><?php echo $strings['title']; ?></title>
+    <title><?php echo htmlspecialchars($strings['title'], ENT_QUOTES, 'UTF-8'); ?></title>
 </head>
 
 <body>
     <div class="alert alert-primary d-flex justify-content-center" style="text-align: center;width: fit-content;margin: auto;margin-top: 3vh;">
-        <h6><?php echo $strings['text']; ?></h6>
+        <h6><?php echo htmlspecialchars($strings['text'], ENT_QUOTES, 'UTF-8'); ?></h6>
     </div>
     <div class="container d-flex justify-content-center">
         <div class="wrapper col-md-6  shadow-lg" style="border-radius: 15px; margin-top: 4vh;">
@@ -35,31 +35,29 @@ $db = new PDO('sqlite:database.db');
 
                 $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-
                 $q = $db->query("SELECT * FROM mandalorian_content");
 
                 if ($q) {
                     while ($cikti = $q->fetch(PDO::FETCH_ASSOC)) {
-
+                        // Escape the content before outputting to prevent XSS
                         echo '<div class="msg col-md-6 m-3 px-4 bg-primary text-wrap " style="border-radius: 20px; padding: 5px;width: fit-content;color: aliceblue;">';
-                        echo $cikti['content'];
+                        echo htmlspecialchars($cikti['content'], ENT_QUOTES, 'UTF-8');
                         echo '</div>';
                     }
                 }
-                #}
-
                 ?>
             </div>
             <div class="p-3 pb-0" style="text-align: center;">
                 <form action="#" method="POST" style="margin: 0;">
-                    <textarea placeholder="<?php echo $strings['message']; ?>" class="form-control" rows="3" name="mes"></textarea>
-                    <button type="submit" class="btn btn-primary m-3"><?php echo $strings['submit']; ?></button>
+                    <!-- Escape the placeholder text -->
+                    <textarea placeholder="<?php echo htmlspecialchars($strings['message'], ENT_QUOTES, 'UTF-8'); ?>" class="form-control" rows="3" name="mes"></textarea>
+                    <button type="submit" class="btn btn-primary m-3"><?php echo htmlspecialchars($strings['submit'], ENT_QUOTES, 'UTF-8'); ?></button>
                 </form>
             </div>
         </div>
     </div>
     <form action="#" method="post">
-        <button type="submit" name="del" class="btn btn-primary m-3"><?php echo $strings['delete']; ?></button>
+        <button type="submit" name="del" class="btn btn-primary m-3"><?php echo htmlspecialchars($strings['delete'], ENT_QUOTES, 'UTF-8'); ?></button>
     </form>
 
     <?php
@@ -71,11 +69,14 @@ $db = new PDO('sqlite:database.db');
         header("Location: stored.php");
         exit;
     }
+
+    // Sanitize and insert the user message safely
     if (isset($_POST['mes'])) {
+        $message = htmlspecialchars($_POST['mes'], ENT_QUOTES, 'UTF-8'); // Escape user input
         $q = $db->prepare("INSERT INTO mandalorian_content (username,content) VALUES (:username,:message)");
         $q->execute(array(
             "username" => $_SESSION['username'],
-            "message" => $_POST['mes'],
+            "message" => $message, // Insert the sanitized message
         ));
         header("Location: stored.php");
         exit;
@@ -83,7 +84,7 @@ $db = new PDO('sqlite:database.db');
 
     ?>
     </div>
-    <script id="VLBar" title="<?= $strings['title'] ?>" category-id="1" src="/public/assets/js/vlnav.min.js"></script>
+    <script id="VLBar" title="<?= htmlspecialchars($strings['title'], ENT_QUOTES, 'UTF-8') ?>" category-id="1" src="/public/assets/js/vlnav.min.js"></script>
 </body>
 
 </html>
