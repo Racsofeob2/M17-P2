@@ -24,13 +24,13 @@ $strings = tr();
     if (isset($_GET['q'])) {
       $q = $_GET['q'];
       echo '<div class="alert alert-danger" style="margin-top: 30vh;" role="alert" >';
-      echo '' . $strings['text'] . ' <b>' . $q . '</b> ';
+      echo htmlspecialchars($strings['text']) . ' <b>' . htmlspecialchars($q) . '</b> ';
       echo '<a href="index.php" ">' . $strings['try'] . '</a>';
       echo "</div>";
     } else {
       echo '<form method="GET" action="#" style="margin-top: 30vh;" class="row g-3 col-md-6 row justify-content-center mx-auto">';
-      echo '<input class="form-control" type="text" placeholder="' . $strings['search'] . '" name="q">';
-      echo '<button type="submit" class="col-md-3 btn btn-primary mb-3">' . $strings['s_button'] . '</button>';
+      echo '<input class="form-control" type="text" placeholder="' . htmlspecialchars($strings['search']) . '" name="q">';
+      echo '<button type="submit" class="col-md-3 btn btn-primary mb-3">' . htmlspecialchars($strings['s_button']) . '</button>';
       echo '</form>';
     }
 
