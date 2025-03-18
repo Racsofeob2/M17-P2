@@ -12,7 +12,10 @@ if( isset($_COOKIE['Z3JhbnQtZnVsbC1wcml2aWxpZ2VzCg']) ){
     
     
     try{
-    $user = unserialize( urldecode( base64_decode ( $_COOKIE['Z3JhbnQtZnVsbC1wcml2aWxpZ2VzCg'] ) ));
+        $user = json_decode(base64_decode($_COOKIE['Z3JhbnQtZnVsbC1wcml2aWxpZ2VzCg']), true);
+        if ($user === null) {
+            header("Location: login.php?msg=3");
+        }
     }catch(Exception $e){
         header("Location: login.php?msg=3");
     }
