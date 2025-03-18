@@ -14,26 +14,26 @@ $strings = tr();
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" type="text/css" href="bootstrap.min.css">
 
-    <title><?php echo $strings['title']; ?></title>
+<title><?php echo htmlspecialchars($strings['title']); ?></title>
 </head>
 
 <body>
     <div class="container col-md-4 shadow-lg rounded">
         <div class="d-flex row justify-content-center pt-lg-5 " style="margin-top: 20vh;text-align:center;">
             <div class="alert alert-primary col-md-7 mb-5" role="alert">
-            <?php echo $strings['text']; ?>
-            </div>
+    <?php echo htmlspecialchars($strings['text']); ?>
+</div>
             <form action="#" method="get">
                 <div class="justify-content-center pb-3">
-                    <label for="height" class="form-label"><?php echo $strings['height']; ?></label>
-                    <input type="text" name="height" id="" class="col-md-5">
+                    <label for="height" class="form-label"><?php echo htmlspecialchars($strings['height']); ?></label>
+                    <input type="text" name="height" id="height" class="col-md-5" value="<?php echo isset($_GET['height']) ? htmlspecialchars($_GET['height']) : ''; ?>">
                 </div>
                 <div class="justify-content-center">
-                    <label for="base" class="form-label"><?php echo $strings['base']; ?></label>
-                    <input type="text" name="base" id="" class="col-md-5 ms-3">
+                    <label for="base" class="form-label"><?php echo htmlspecialchars($strings['base']); ?></label>
+                    <input type="text" name="base" id="base" class="col-md-5 ms-3" value="<?php echo isset($_GET['base']) ? htmlspecialchars($_GET['base']) : ''; ?>">
+
                 </div>
-                <button class="col-md-3 btn btn-primary mb-3 mt-4 row" style="text-align: center;"><?php echo $strings['button']; ?></button>
-            </form>
+<button class="col-md-3 btn btn-primary mb-3 mt-4 row" style="text-align: center;"><?php echo htmlspecialchars($strings['button']); ?></button>            </form>
         </div>
         <?php
     if (isset($_GET['base']) && isset($_GET['height'])) {
@@ -41,10 +41,12 @@ $strings = tr();
         <div class="alert alert-success col-md-5 mb-lg-5" id="answer" role="alert" style="text-align: center;"></div>
     </div>';
         echo '<script>';
-        echo 'var height = '.$_GET['height'].';';
-        echo 'var base = '.$_GET['base'].';';
+        $base = htmlspecialchars($_GET['base']);
+        $height = htmlspecialchars($_GET['height']);
+        echo 'var height = ' . json_encode($height) . ';';
+        echo 'var base = ' . json_encode($base) . ';';
         echo 'var ans = base * height / 2;';
-        echo 'document.getElementById("answer").innerHTML = "'.$strings['alert'].' "+ans;';
+        echo 'document.getElementById("answer").innerHTML = "' . htmlspecialchars($strings['alert']) . ' " + ans;';
         echo '</script>';
     }
     ?>
