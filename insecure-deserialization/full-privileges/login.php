@@ -19,10 +19,9 @@
 			$permissions = $users[1]['permissions'];
 
 
-			$user = new User($username,$password,$isAdmin,$permissions);
-			$serializedStr = serialize($user);
-			$extremeSecretCookie = base64_encode(urlencode($serializedStr));
-			setcookie('Z3JhbnQtZnVsbC1wcml2aWxpZ2VzCg',$extremeSecretCookie);
+			$user = new User($username, $password, $isAdmin, $permissions);
+			$encodedUser = base64_encode(json_encode($user)); 
+			setcookie('Z3JhbnQtZnVsbC1wcml2aWxpZ2VzCg', $encodedUser);
 			header("Location: index.php");
 			exit;
 		}
