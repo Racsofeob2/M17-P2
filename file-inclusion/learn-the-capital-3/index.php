@@ -44,14 +44,21 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                     <p><?php 
-                        if(isset($_GET['country'])){
+                        if (isset($_GET['country'])) {
                             $page = $_GET['country'];
-                            if ( !strstr($page , 'file')) {
-                                echo "ERROR: File not found!";
-                                exit;
-                            } 
-                            else{
+                            
+                            // Sanitize the input using basename to remove directory information
+                            $page = basename($page);
+                            
+                            // Define allowed pages
+                            $allowed_pages = ['france.php', 'germany.php', 'north_korea.php', 'turkey.php', 'england.php'];
+
+                            // Check if the page is in the allowed list
+                            if (in_array($page, $allowed_pages)) {
+                                // Include the file if it's allowed
                                 include($page);
+                            } else {
+                                echo "ERROR: File not found!";
                             }
                         }
                     ?>
