@@ -17,10 +17,21 @@
 	 
 		if( $username === md5($_POST['username']) && $password === md5($_POST['password']) ){
 
-			$user = new User($username,$password,$isAdmin);
-			$serializedStr = serialize($user);
-			$extremeSecretCookie = base64_encode(urlencode($serializedStr));
-			setcookie('d2VsY29tZS1hZG1pbmlzdHJhdG9y',$extremeSecretCookie);
+			// Create an array of the user data
+			$userData = json_encode([
+			    'username' => $username,
+			    'password' => $password,
+			    'isAdmin' => $isAdmin
+			]);
+			
+			// Hash the user data with a secret key
+			$hmac = hash_hmac('sha256', $userData, 'S3cr3t!'); 
+			
+			// Combine the user data and the HMAC for integrity check
+			$cookieData = base64_encode($userData . '::' . $hmac);
+			
+			// Set the secure cookie
+			setcookie('d2VsY29tZS1hZG1pbmlzdHJhdG9y', $cookieData);
 			header("Location: index.php");
 			exit;
 		}
