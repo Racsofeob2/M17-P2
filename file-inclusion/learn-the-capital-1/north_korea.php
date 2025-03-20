@@ -1,1 +1,0 @@
-<?php echo $strings['file3']; ?>
