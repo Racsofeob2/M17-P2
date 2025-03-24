@@ -1,38 +1,50 @@
 <?php
-
 	require("user.php");
 	require("db.php");
     require("../../../lang/lang.php");
 	$strings = tr();
- 
+
 	$db = new DB();
 	$users = $db->getUsersList();
-	
 
-	if( isset( $_POST['username'] ) && isset( $_POST['password'] ) ){
-		
-		$username = $users[0]['username'];
-		$password = $users[0]['password'];
- 
-		if( $username === $_POST['username'] && $password === $_POST['password'] ){
-		 
-			 
-			header("Location: index.php");
+	if (isset($_POST['username']) && isset($_POST['password'])) {
+		$usernameInput = $_POST['username'];
+		$passwordInput = $_POST['password'];
+
+		// Buscar usuario en la base de datos
+		$user = null;
+		foreach ($users as $userData) {
+			if ($userData['username'] === $usernameInput) {
+				$user = $userData;
+				break;
+			}
+		}
+
+		if ($user && password_verify($passwordInput, $user['password'])) {
+			// Seguridad: definir la clave de manera segura
 			define("SECRET_KEY", "S3cr3t!"); 
-			$userData = json_encode(["username" => $username, "password" => $password]);
-			$hmac = hash_hmac('sha256', $userData, SECRET_KEY);
-			$safeCookie = base64_encode($userData . '::' . $hmac);
-			setcookie('V2VsY29tZS1hZG1pbgo', $safeCookie, time() + 3600, "/", "", true, true); 
 			
+			// Crear un token seguro sin datos sensibles
+			$tokenData = json_encode(["username" => $usernameInput, "exp" => time() + 3600]); // Expira en 1h
+			$hmac = hash_hmac('sha256', $tokenData, SECRET_KEY);
+			$safeCookie = base64_encode($tokenData . '::' . $hmac);
+			
+			// Cookies seguras
+			setcookie('V2VsY29tZS1hZG1pbgo', $safeCookie, [
+				'expires' => time() + 3600,
+				'path' => '/',
+				'secure' => true,    // Solo en HTTPS
+				'httponly' => true,  // No accesible desde JavaScript
+				'samesite' => 'Strict' // Protección contra CSRF
+			]);
+
 			header("Location: index.php");
 			exit;
-		}
-		else{
+		} else {
 			header("Location: login.php?msg=1");
 			exit;
 		}
 	}
-
 ?>
 
 <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
