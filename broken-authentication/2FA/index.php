@@ -1,30 +1,38 @@
 <?php
 require("../../../lang/lang.php");
 $strings = tr();
-session_start();
-session_unset(); // Reset session data
+session_start(); // Iniciar sesión antes de manipularla
+session_unset(); // Resetear datos de sesión
 
-// Define a username and hashed password (for example, we use 'admin' as the username)
+// Definir credenciales almacenadas
 $storedUsername = 'admin';
-$storedPasswordHash = '$2y$10$QGeqwpY6Z1KhDeM9Bd8I8.ezKzk6noCewgS2A/h3Pn1zxVve9gFCi'; // This is the hash of 'admin' using password_hash()
+$storedPasswordHash = '$2y$10$QGeqwpY6Z1KhDeM9Bd8I8.ezKzk6noCewgS2A/h3Pn1zxVve9gFCi'; // Hash de 'admin'
+
+// Manejo de intentos fallidos
+if (!isset($_SESSION['login_attempts'])) {
+    $_SESSION['login_attempts'] = 0;
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+    $username = trim($_POST['username']);
+    $password = trim($_POST['password']);
 
-    // Check if the username matches
-    if ($username === $storedUsername && password_verify($password, $storedPasswordHash)) {
-        $randomCode = rand(10000, 99999);
-
-        // 2FA doğrulama kodu kullanıcıya gönderilir (örneğin burada oturumda saklanıyor)
-        $_SESSION['2fa_code'] = $randomCode;
-        $_SESSION['username'] = $username;
-
-        // 2FA doğrulama sayfasına yönlendirme yapılır
-        header('Location: 2fa.php');
-        exit();
+    if ($_SESSION['login_attempts'] >= 5) {
+        $errorMessage = 'Demasiados intentos fallidos. Intente más tarde.';
     } else {
-        $errorMessage = 'Kullanıcı adı veya şifre hatalı!';
+        if ($username === $storedUsername && password_verify($password, $storedPasswordHash)) {
+            $_SESSION['login_attempts'] = 0; // Resetear intentos
+
+            $randomCode = random_int(10000, 99999); // Uso seguro de generación aleatoria
+            $_SESSION['2fa_code'] = $randomCode;
+            $_SESSION['username'] = $username;
+
+            header('Location: 2fa.php');
+            exit();
+        } else {
+            $_SESSION['login_attempts']++;
+            $errorMessage = 'Credenciales incorrectas. Inténtalo de nuevo.';
+        }
     }
 }
 ?>
@@ -33,8 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $strings["login"]; ?></title>
-    <!-- Bootstrap CSS -->
+    <title><?= htmlspecialchars($strings["login"], ENT_QUOTES, 'UTF-8'); ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
@@ -43,36 +50,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="col-md-6">
                 <div class="card mx-auto">
                     <div class="card-header bg-primary text-white text-center">
-                        <h2><?= $strings["login"]; ?></h2>
+                        <h2><?= htmlspecialchars($strings["login"], ENT_QUOTES, 'UTF-8'); ?></h2>
                     </div>
                     <div class="card-body">
-                        <div class="mb-3">
-                            <?php if (isset($errorMessage)) : ?>
-                                <div class="alert alert-danger" role="alert"><?= $errorMessage; ?></div>
-                            <?php endif; ?>
-                        </div>
+                        <?php if (isset($errorMessage)) : ?>
+                            <div class="alert alert-danger" role="alert"><?= htmlspecialchars($errorMessage, ENT_QUOTES, 'UTF-8'); ?></div>
+                        <?php endif; ?>
                         <form action="index.php" method="post">
                             <div class="mb-3">
-                                <label for="username" class="form-label"><?= $strings["ka"]; ?></label>
+                                <label for="username" class="form-label"><?= htmlspecialchars($strings["ka"], ENT_QUOTES, 'UTF-8'); ?></label>
                                 <input type="text" id="username" name="username" class="form-control" required>
                             </div>
                             <div class="mb-3">
-                                <label for="password" class="form-label"><?= $strings["pass"]; ?></label>
+                                <label for="password" class="form-label"><?= htmlspecialchars($strings["pass"], ENT_QUOTES, 'UTF-8'); ?></label>
                                 <input type="password" id="password" name="password" class="form-control" required>
                             </div>
                             <div class="mb-3">
-                                <p class="text-center"><?= $strings["not"]; ?></p>
+                                <p class="text-center"><?= htmlspecialchars($strings["not"], ENT_QUOTES, 'UTF-8'); ?></p>
                             </div>
-                            <button type="submit" class="btn btn-primary"><?= $strings["submit"]; ?></button>
+                            <button type="submit" class="btn btn-primary"><?= htmlspecialchars($strings["submit"], ENT_QUOTES, 'UTF-8'); ?></button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <script id="VLBar" title="<?= $strings["title"]; ?>" category-id="10" src="/public/assets/js/vlnav.min.js"></script>
-
-    <!-- Bootstrap JS ve Popper.js (JavaScript kütüphaneleri) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
