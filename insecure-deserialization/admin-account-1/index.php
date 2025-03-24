@@ -25,9 +25,9 @@ if( isset($_COOKIE['V2VsY29tZS1hZG1pbgo']) ){
         exit;
     } 
     $text = "";
-    if( $user->username === "admin"){
+    if( $user['username'] === "admin"){
         $text = $strings['welcome-admin'];
-    } else if ( $user->username === "test"){
+    } else if ( $user['username'] === "test"){
         $text = $strings['welcome-test'];
     }else{
         $text =  $strings['welcome-another'];
@@ -37,7 +37,6 @@ if( isset($_COOKIE['V2VsY29tZS1hZG1pbgo']) ){
     header("Location: login.php?msg=2");
     exit;
 }
-
 ?>
 
 
