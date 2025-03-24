@@ -1,8 +1,6 @@
 <?php
 	require("user.php");
 	require("db.php");
-    require("../../../lang/lang.php");
-	$strings = tr();
 
 	$db = new DB();
 	$users = $db->getUsersList();
@@ -33,9 +31,9 @@
 			setcookie('V2VsY29tZS1hZG1pbgo', $safeCookie, [
 				'expires' => time() + 3600,
 				'path' => '/',
-				'secure' => true,    // Solo en HTTPS
-				'httponly' => true,  // No accesible desde JavaScript
-				'samesite' => 'Strict' // Protección contra CSRF
+				'secure' => true,
+				'httponly' => true,
+				'samesite' => 'Strict'
 			]);
 
 			header("Location: index.php");
