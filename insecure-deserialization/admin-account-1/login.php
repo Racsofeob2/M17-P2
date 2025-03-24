@@ -1,48 +1,32 @@
 <?php
-	require("user.php");
-	require("db.php");
+    require("user.php");
+    require("db.php");
+    require("../../../lang/lang.php");
+    $strings = tr(); // Asegurando que 'tr()' define correctamente los mensajes en el array $strings.
 
-	$db = new DB();
-	$users = $db->getUsersList();
+    $db = new DB();
+    $users = $db->getUsersList();
 
-	if (isset($_POST['username']) && isset($_POST['password'])) {
-		$usernameInput = $_POST['username'];
-		$passwordInput = $_POST['password'];
+    if( isset( $_POST['username'] ) && isset( $_POST['password'] ) ){
+        
+        $username = $users[0]['username'];
+        $password = $users[0]['password'];
 
-		// Buscar usuario en la base de datos
-		$user = null;
-		foreach ($users as $userData) {
-			if ($userData['username'] === $usernameInput) {
-				$user = $userData;
-				break;
-			}
-		}
-
-		if ($user && password_verify($passwordInput, $user['password'])) {
-			// Seguridad: definir la clave de manera segura
-			define("SECRET_KEY", "S3cr3t!"); 
-			
-			// Crear un token seguro sin datos sensibles
-			$tokenData = json_encode(["username" => $usernameInput, "exp" => time() + 3600]); // Expira en 1h
-			$hmac = hash_hmac('sha256', $tokenData, SECRET_KEY);
-			$safeCookie = base64_encode($tokenData . '::' . $hmac);
-			
-			// Cookies seguras
-			setcookie('V2VsY29tZS1hZG1pbgo', $safeCookie, [
-				'expires' => time() + 3600,
-				'path' => '/',
-				'secure' => true,
-				'httponly' => true,
-				'samesite' => 'Strict'
-			]);
-
-			header("Location: index.php");
-			exit;
-		} else {
-			header("Location: login.php?msg=1");
-			exit;
-		}
-	}
+        if( $username === $_POST['username'] && $password === $_POST['password'] ){
+            header("Location: index.php");
+            $user = new User($username,$password);
+            $serializedStr = serialize($user);
+            $extremeSecretCookie = base64_encode($serializedStr);
+            setcookie('V2VsY29tZS1hZG1pbgo',$extremeSecretCookie);
+            
+            header("Location: index.php");
+            exit;
+        }
+        else{
+            header("Location: login.php?msg=1");
+            exit;
+        }
+    }
 ?>
 
 <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
@@ -96,13 +80,13 @@ input {
 <div class ="container">
 <div class="login">
 <?php 
-		if( isset($_GET['msg'])){			
-			if ( $_GET['msg'] == 2 )
-			echo "<h2 style = 'color:red'>".$strings['enter-system']."</h2>";
-			else
-			echo "<h2 style = 'color:red'>".$strings['invalid-credentials']."</h2>";
-		}
-		 ?>
+            if( isset($_GET['msg'])){
+                if ($_GET['msg'] == 2)
+                    echo "<h2 style='color:red'>".$strings['enter-system']."</h2>";
+                else
+                    echo "<h2 style='color:red'>".$strings['invalid-credentials']."</h2>";
+            }
+        ?>
 		 <br>
 	<h1 ><?= $strings['sign-in']; ?></h1>
 	<br>
