@@ -1,8 +1,6 @@
 <?php
  
 include("user.php");
-require("../../../lang/lang.php");
-$strings = tr();
 error_reporting(0);
 ini_set('display_errors', 0);
 
@@ -26,24 +24,22 @@ if( isset($_COOKIE['V2VsY29tZS1hZG1pbgo']) ){
     } 
     $text = "";
     if( $user['username'] === "admin"){
-        $text = $strings['welcome-admin'];
+        $text = "Welcome, Admin!";
     } else if ( $user['username'] === "test"){
-        $text = $strings['welcome-test'];
+        $text = "Welcome, Test User!";
     }else{
-        $text =  $strings['welcome-another'];
+        $text =  "Welcome, User!";
     }
 
 }else{
     header("Location: login.php?msg=2");
     exit;
 }
+
 ?>
 
-
- 
-<!------ Include the above in your HEAD tag ---------->
-
-<!DOCTYPE html><html lang='en' class=''>
+<!DOCTYPE html>
+<html lang='en'>
 <head>
 <style>
 h1{
@@ -51,11 +47,10 @@ h1{
  }
 </style>
 <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
- 
-</head><body>
+</head>
+<body>
 
 <?php echo '<h2 style="text-align: center; color:red; margin-top: 100px;">'.$text.'</h2>'; ?>
 
 </body>
-<script id="VLBar" title="<?= $strings['title']; ?>" category-id="9" src="/public/assets/js/vlnav.min.js"></script>
 </html>
