@@ -1,56 +1,34 @@
 <?php
- 
-include("user.php");
-error_reporting(0);
-ini_set('display_errors', 0);
-
-if( isset($_COOKIE['V2VsY29tZS1hZG1pbgo']) ){
-    try{
-        define("SECRET_KEY", "S3cr3t!"); 
-        $cookieData = base64_decode($_COOKIE['V2VsY29tZS1hZG1pbgo']);
-        list($userData, $hmac) = explode('::', $cookieData, 2);
-
-        if (hash_hmac('sha256', $userData, SECRET_KEY) !== $hmac) {
-            throw new Exception("Invalid cookie signature");
-        }
-
-        $user = json_decode($userData, true);
-        if (!$user || !isset($user['username'])) {
-            throw new Exception("Invalid cookie data");
-        }
-    }catch(Exception $e){
-        header("Location: login.php?msg=3");
-        exit;
-    } 
-    $text = "";
-    if( $user['username'] === "admin"){
-        $text = "Welcome, Admin!";
-    } else if ( $user['username'] === "test"){
-        $text = "Welcome, Test User!";
-    }else{
-        $text =  "Welcome, User!";
-    }
-
-}else{
-    header("Location: login.php?msg=2");
-    exit;
-}
-
+// login.php modificado
+session_start();
+$strings = [
+    'login_error' => 'Invalid username or password.',
+    'username' => 'Username',
+    'password' => 'Password',
+    'login' => 'Login'
+];
 ?>
-
 <!DOCTYPE html>
-<html lang='en'>
+<html lang="en">
 <head>
-<style>
-h1{
-    text-align: center;
- }
-</style>
-<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
 </head>
 <body>
-
-<?php echo '<h2 style="text-align: center; color:red; margin-top: 100px;">'.$text.'</h2>'; ?>
-
+    <h1>Login</h1>
+    <?php if (isset($_SESSION['error'])): ?>
+        <p style="color:red;"> <?php echo $strings['login_error']; ?> </p>
+        <?php unset($_SESSION['error']); ?>
+    <?php endif; ?>
+    <form action="process_login.php" method="POST">
+        <label for="username"> <?php echo $strings['username']; ?> </label>
+        <input type="text" id="username" name="username" required>
+        <br>
+        <label for="password"> <?php echo $strings['password']; ?> </label>
+        <input type="password" id="password" name="password" required>
+        <br>
+        <button type="submit"> <?php echo $strings['login']; ?> </button>
+    </form>
 </body>
 </html>
