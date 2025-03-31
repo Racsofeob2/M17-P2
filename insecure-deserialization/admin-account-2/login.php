@@ -9,11 +9,11 @@ $db = new DB();
 $users = $db->getUsersList();
 
 if (isset($_POST['username']) && isset($_POST['password'])) {
-    $inputUsername = trim($_POST['username']);
-    $inputPassword = trim($_POST['password']);
+    $inputUsername = md5(trim($_POST['username']));
+    $inputPassword = md5(trim($_POST['password']));
     
     foreach ($users as $user) {
-        if (hash_equals($user['username'], md5($inputUsername)) && hash_equals($user['password'], md5($inputPassword))) {
+        if (hash_equals($user['username'], $inputUsername) && hash_equals($user['password'], $inputPassword)) {
             $userData = json_encode([
                 'username' => $user['username'],
                 'isAdmin' => $user['isAdmin']
