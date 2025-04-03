@@ -1,0 +1,66 @@
+Grups de projecte:
+
+G1 (Cross Site Scripting XSS, Command Injection, File Inclusion)
+Markel Chala Moro
+
+Abd Samad El Arnouk Jamal    
+
+Joan Beltran Esquinas   
+
+Oriol Callau Matas                                                          
+
+G2 (Insecure Direct Object References (IDOR), Cross Site Request Forgery (CSRF), Race Condition)
+
+Pol Alsina Cruz
+
+Martin Antu Arriagada Curihual 
+
+Rubén Escudero González
+
+Andreu Ferré Folqué
+
+Joan Porta Escoda
+
+G3 (XML External Entity (XXE), Server Side Template Injection (SSTI), API Hacking)
+
+Mireia Garcia Marzo
+
+Andrés Hernández Fernández
+
+Sergi Herran Fernandez
+
+Toni Linares Hernández
+
+G4 (SQL Injection, Insecure Deserialization, Broken Authentication,)
+
+Òscar Ferré Obón
+
+Arnau Figueras Aguado
+
+Junfeng Liu
+
+Carlos Manzaneda Martín
+
+Gabriel Vartolomei
+
+G5 (SQL Injection, XML External Entity (XXE), File Upload)
+
+Marc Masip García
+
+Víctor Pascual Gómez
+
+Lisandro Silva Nogueira
+
+Nil Llambrich Rehues
+
+Adrián Vázquez Secher
+
+G6 (API Hacking, Captcha Bypass, Path Traversal )
+
+Adrián Martínez Giménez
+
+Robert Martínez Giménez
+
+Ramon Ramírez Llaberia,
+
+Oriol Ribé Quirós
